@@ -948,13 +948,20 @@ async def create_transcription(
 
 
 @app.post("/v1/audio/speech", dependencies=[Depends(verify_api_key)])
-async def create_speech(
-    model: str = "kokoro",
-    input: str = "",
-    voice: str = "af_heart",
-    speed: float = 1.0,
-    response_format: str = "wav",
-):
+async def create_speech(request: Request):
+    # Accept both JSON body (OpenAI-compatible) and query params
+    try:
+        body = await request.json()
+    except Exception:
+        body = {}
+    params = dict(request.query_params)
+    # Body takes precedence over query params
+    merged = {**params, **body}
+    model = str(merged.get("model", "kokoro"))
+    input = str(merged.get("input", ""))
+    voice = str(merged.get("voice", "af_heart"))
+    speed = float(merged.get("speed", 1.0))
+    response_format = str(merged.get("response_format", "wav"))
     """
     Generate speech from text (OpenAI TTS API compatible).
 
