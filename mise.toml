@@ -1,6 +1,13 @@
 [tools]
 python = "3.12"
 
+[env]
+_.python.venv = { path = ".venv", create = true }
+
+[tasks.install]
+description = "Install vllm-mlx with audio deps in editable mode"
+run = "pip install -e '.[audio]'"
+
 [tasks.serve]
 description = "Start the vllm-mlx server"
 run = "python -m vllm_mlx.server"
