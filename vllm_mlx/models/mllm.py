@@ -1154,10 +1154,14 @@ class MLXMultimodalLM:
             )
         try:
             # Use get_chat_template directly since messages are already properly formatted
+            template_kwargs = {}
+            if kwargs.get("tools"):
+                template_kwargs["tools"] = kwargs["tools"]
             formatted_prompt = get_chat_template(
                 self.processor,
                 chat_messages,
                 add_generation_prompt=True,
+                **template_kwargs,
             )
         except Exception as e:
             logger.warning(
@@ -1506,10 +1510,14 @@ class MLXMultimodalLM:
         # Apply chat template directly - messages are already properly structured
         try:
             # Use get_chat_template directly since messages are already properly formatted
+            template_kwargs = {}
+            if kwargs.get("tools"):
+                template_kwargs["tools"] = kwargs["tools"]
             formatted_prompt = get_chat_template(
                 self.processor,
                 chat_messages,
                 add_generation_prompt=True,
+                **template_kwargs,
             )
         except Exception as e:
             logger.warning(
