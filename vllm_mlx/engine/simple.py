@@ -271,12 +271,15 @@ class SimpleEngine(BaseEngine):
             if self._is_mllm:
                 # For MLLM, use the chat method which handles images/videos
                 # Run in thread pool to allow asyncio timeout to work
+                mllm_kwargs = dict(kwargs)
+                if template_tools:
+                    mllm_kwargs["tools"] = template_tools
                 output = await asyncio.to_thread(
                     self._model.chat,
                     messages=messages,
                     max_tokens=max_tokens,
                     temperature=temperature,
-                    **kwargs,
+                    **mllm_kwargs,
                 )
                 text = clean_output_text(output.text)
                 return GenerationOutput(
@@ -345,13 +348,16 @@ class SimpleEngine(BaseEngine):
             token_count = 0
 
             # Run stream_chat in thread pool since it's synchronous
+            mllm_kwargs = dict(kwargs)
+            if template_tools:
+                mllm_kwargs["tools"] = template_tools
             def run_stream():
                 return list(
                     self._model.stream_chat(
                         messages=messages,
                         max_tokens=max_tokens,
                         temperature=temperature,
-                        **kwargs,
+                        **mllm_kwargs,
                     )
                 )
 
